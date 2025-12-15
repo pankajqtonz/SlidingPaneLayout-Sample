@@ -2,6 +2,7 @@ package com.akexorcist.example.slidingpanelayout.ui
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.akexorcist.example.slidingpanelayout.R
+import com.akexorcist.example.slidingpanelayout.databinding.FragmentTopicBinding
 import com.akexorcist.example.slidingpanelayout.ui.adapter.TopicAdapter
 import com.akexorcist.example.slidingpanelayout.vo.Book
-import kotlinx.android.synthetic.main.fragment_topic.*
 
 class TopicFragment : Fragment() {
     private val viewModel: BookViewModel by activityViewModels()
@@ -22,6 +22,8 @@ class TopicFragment : Fragment() {
             isSmoothScrollbarEnabled = true
         }
     }
+    private var _binding: FragmentTopicBinding? = null
+    private val binding get() = _binding!!
 
     private var selectedBookPosition: Int = -1
 
@@ -29,16 +31,17 @@ class TopicFragment : Fragment() {
         private const val EXTRA_SELECTED_BOOK_POSITION = "extra_selected_book_position"
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_topic, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentTopicBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.booksLiveData.observe(viewLifecycleOwner, booksObserver)
         adapter.setTopicClickListener(onTopicClick)
-        recyclerViewTopic.layoutManager = layoutManager
-        recyclerViewTopic.adapter = adapter
+        binding.recyclerViewTopic.layoutManager = layoutManager
+        binding.recyclerViewTopic.adapter = adapter
         showEmpty()
 
         if (savedInstanceState != null) {
@@ -50,6 +53,7 @@ class TopicFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.booksLiveData.removeObserver(booksObserver)
+        _binding = null
     }
 
     private val booksObserver = Observer<List<Book>> { books ->
@@ -65,20 +69,20 @@ class TopicFragment : Fragment() {
     }
 
     private fun onBookSelected(book: Book) {
-        Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
             viewModel.selectBook(book)
             viewModel.closeBooksPane()
         }, 300)
     }
 
     private fun showContent() {
-        layoutContent.visibility = View.VISIBLE
-        layoutEmpty.visibility = View.GONE
+        binding.layoutContent.visibility = View.VISIBLE
+        binding.layoutEmpty.visibility = View.GONE
     }
 
     private fun showEmpty() {
-        layoutContent.visibility = View.GONE
-        layoutEmpty.visibility = View.VISIBLE
+        binding.layoutContent.visibility = View.GONE
+        binding.layoutEmpty.visibility = View.VISIBLE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -4,16 +4,17 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.akexorcist.example.slidingpanelayout.R
+import com.akexorcist.example.slidingpanelayout.databinding.ActivityMainBinding
 import com.akexorcist.example.slidingpanelayout.vo.Mock
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: BookViewModel by viewModels()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         viewModel.openBooksPaneLiveData.observe(this, openBooksPaneObserver)
         viewModel.closeBooksPaneLiveData.observe(this, closeBooksPaneObserver)
         viewModel.setBooks(Mock.getBooks(this))
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (slidingPaneLayout.isOpen) {
+        if (binding.slidingPaneLayout.isOpen) {
             super.onBackPressed()
         } else {
             openBooksPane()
@@ -43,10 +44,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openBooksPane() {
-        slidingPaneLayout.openPane()
+        binding.slidingPaneLayout.openPane()
     }
 
     private fun closeBooksPane() {
-        slidingPaneLayout.closePane()
+        binding.slidingPaneLayout.closePane()
     }
 }

@@ -18,15 +18,15 @@
         <fragment
             android:id="@+id/fragmentTopic"
             android:name="com.akexorcist.example.slidingpanelayout.ui.TopicFragment"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <fragment
             android:id="@+id/fragmentDetail"
             android:name="com.akexorcist.example.slidingpanelayout.ui.DetailFragment"
-            android:layout_width="320dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+           />
 
     </androidx.slidingpanelayout.widget.SlidingPaneLayout>
 

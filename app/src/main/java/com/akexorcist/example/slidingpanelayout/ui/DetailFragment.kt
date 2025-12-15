@@ -8,31 +8,34 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.akexorcist.example.slidingpanelayout.R
+import com.akexorcist.example.slidingpanelayout.databinding.FragmentDetailBinding
 import com.akexorcist.example.slidingpanelayout.util.ShortenDrawableRequestListener
 import com.akexorcist.example.slidingpanelayout.util.toDate
 import com.akexorcist.example.slidingpanelayout.vo.Book
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import kotlinx.android.synthetic.main.fragment_detail.*
-
 
 class DetailFragment : Fragment() {
     private val viewModel: BookViewModel by activityViewModels()
+    private var _binding: FragmentDetailBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_detail, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentDetailBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.currentBookLiveData.observe(viewLifecycleOwner, bookObserver)
-        buttonSelectBook.setOnClickListener { openBooksPane() }
+        binding.buttonSelectBook.setOnClickListener { openBooksPane() }
         showEmpty()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.currentBookLiveData.removeObserver(bookObserver)
+        _binding = null
     }
 
     private val bookObserver = Observer<Book> { book ->
@@ -47,24 +50,24 @@ class DetailFragment : Fragment() {
     }
 
     private fun updateBookDetail(book: Book) {
-        textViewIsbn.text = book.isbn
-        textViewTitle.text = book.title
-        textViewAuthors.text = book.authors?.joinToString() ?: ""
-        textViewPageCount.text = getString(R.string.page_count, book.pageCount)
-        textViewPublishedDate.text = book.publishedDate?.date?.toDate() ?: ""
-        textViewDescription.text = when {
+        binding.textViewIsbn.text = book.isbn
+        binding.textViewTitle.text = book.title
+        binding.textViewAuthors.text = book.authors?.joinToString() ?: ""
+        binding.textViewPageCount.text = getString(R.string.page_count, book.pageCount)
+        binding.textViewPublishedDate.text = book.publishedDate?.date?.toDate() ?: ""
+        binding.textViewDescription.text = when {
             book.longDescription != null -> getString(R.string.book_description, book.longDescription)
             book.shortDescription != null -> getString(R.string.book_description, book.shortDescription)
             else -> getString(R.string.no_book_description)
         }
-        textViewCategories.text = book.categories?.joinToString() ?: ""
+        binding.textViewCategories.text = book.categories?.joinToString() ?: ""
         showThumbnailLoading()
         Glide.with(this)
             .load(book.thumbnailUrl)
             .transition(DrawableTransitionOptions.withCrossFade())
             .error(R.drawable.ic_broken_image)
             .addListener(thumbnailRequestListener)
-            .into(imageViewThumbnail)
+            .into(binding.imageViewThumbnail)
     }
 
     private fun openBooksPane() {
@@ -72,20 +75,20 @@ class DetailFragment : Fragment() {
     }
 
     private fun showThumbnailLoading() {
-        progressBarThumbnail.visibility = View.VISIBLE
+        binding.progressBarThumbnail.visibility = View.VISIBLE
     }
 
     private fun hideThumbnailLoading() {
-        progressBarThumbnail.visibility = View.GONE
+        binding.progressBarThumbnail.visibility = View.GONE
     }
 
     private fun showContent() {
-        layoutContent.visibility = View.VISIBLE
-        layoutEmpty.visibility = View.GONE
+        binding.layoutContent.visibility = View.VISIBLE
+        binding.layoutEmpty.visibility = View.GONE
     }
 
     private fun showEmpty() {
-        layoutContent.visibility = View.GONE
-        layoutEmpty.visibility = View.VISIBLE
+        binding.layoutContent.visibility = View.GONE
+        binding.layoutEmpty.visibility = View.VISIBLE
     }
 }
