@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.akexorcist.example.slidingpanelayout.vo.Book
 
 class BookViewModel : ViewModel() {
+    //exit dialog to represent the
     private val _booksLiveData: MutableLiveData<List<Book>> = MutableLiveData()
     val booksLiveData: LiveData<List<Book>> = _booksLiveData
 
